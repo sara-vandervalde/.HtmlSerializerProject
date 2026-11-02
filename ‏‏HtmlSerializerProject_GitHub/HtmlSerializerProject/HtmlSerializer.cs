@@ -58,8 +58,16 @@ namespace HtmlSerializerProject
                 // ----- תגית סוגרת -----
                 if (firstWord.StartsWith("/"))
                 {
-                    if (current.Parent != null)
-                        current = current.Parent;
+                    var closingName = firstWord.Substring(1);
+
+                    // מחפשים את האלמנט הפתוח הקרוב עם אותו שם, כדי שתגיות שלא נסגרו לא ישבשו את העץ
+                    var open = current;
+                    while (open != null && open != root && open.Name != closingName)
+                        open = open.Parent;
+
+                    // אם לא נמצאה תגית פותחת תואמת - מתעלמים מהתגית הסוגרת
+                    if (open != null && open != root)
+                        current = open.Parent!;
                     continue;
                 }
 
